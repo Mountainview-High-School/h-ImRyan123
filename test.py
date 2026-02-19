@@ -1,46 +1,46 @@
-import os, time
 
 class Grid:
     
-    def __init__(self, grid_y, grid_x):
-        self.grid_y = grid_y
-        self.grid_x = grid_x
-        self.player_y = 0
-        self.player_x = 0
+    def __init__(self, gridY, gridX, empty_grid):
+        self.gridY = gridY
+        self.gridX = gridX
+        self.empty_grid = empty_grid
+        self.grid = []
         
-        self.empty_grid = "#"
-        self.player_char = "@"
+        self.playerY = 0
+        self.playerX = 0
+        self.plyerChars = {"up":"↑", "down":"↓", "left":"←", "right":"→"}
         
-        self.grid = [[self.empty_grid for _ in range(grid_x)] for _ in range(grid_y)]
-                
-    def __str__(self):
-        buffer_list = []
-        for index, row in enumerate(self.grid):
-            if index == self.player_y:
-                buffer_list.append(" ".join([self.player_char + " " if index == self.player_x else char + " " for index, char in enumerate(self.grid[index])]))
-            else:
-                buffer_list.append(" ".join([char + " " for char in row]))
-        return "\n".join(buffer_list)
-
-    def move_player(self, dy, dx):
-        new_y = self.player_y + dy
-        new_x = self.player_x + dx
+    def make_grid(self):
+        for _ in range(self.gridY):
+            self.grid.append([self.empty_grid for _ in range(self.gridX)]) 
         
-        if new_y < 0 or new_y >= self.grid_y or new_x < 0 or new_x >= self.grid_x:
+    def print_grid(self):
+        for column in self.grid:
+            print(*[str(item) + " " for item in column])
+            
+    def inject_player(self, injectY, injectX):
+        self.playerY = injectY
+        self.playerX = injectX
+        self.grid[injectY][injectX] = self.plyerChars["up"]
+        
+    def move_player(self, moveY, moveX):
+        if (moveY in [0, 1]) and (moveX in [0, 1]) and (moveY == moveX):
+            pass
+        else:
             return
-        
-        self.player_y = new_y
-        self.player_x = new_x
-        
+        if not ((self.playerY + moveY < 0 or self.playerY + moveY > self.gridY) or (self.playerX + moveX < 0 or self.playerX + moveX > self.gridX)):
+            self.grid[self.playerY][self.playerX] = self.empty_grid
+            self.playerY += moveY
+            self.playerX += moveX
+            self.grid[self.playerY][self.playerX] = self.playerChar
+
             
 def main():
     
-    grid = Grid(10, 10)
+    grid = Grid(10, 10, "#")
+    grid.make_grid()
+    grid.inject_player(2, 2)
+    grid.print_grid()
     
-    while True:
-        #grid.print_grid()
-        print(grid)
-        time.sleep(0.2)
-        os.system("cls")
-        grid.move_player(1, 1)
 main()
